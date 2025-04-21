@@ -7,64 +7,38 @@ const tasks = [
 
 export default function App() {
   const [started, setStarted] = useState(false);
-  const [conditions, setConditions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [startTime, setStartTime] = useState(null);
-  const [elapsed, setElapsed] = useState(0);
-  const [reactionTime, setReactionTime] = useState(null); // 🆕 תצוגת זמן סיום
   const [responses, setResponses] = useState([]);
   const [finished, setFinished] = useState(false);
+  const [lastReactionTime, setLastReactionTime] = useState(null);
+  const [condition, setCondition] = useState(() => (Math.random() < 0.5 ? 'with' : 'nohint'));
 
-  // כשמתחילים - גריל תנאי לכל משימה
-  useEffect(() => {
-    if (started) {
-      const randomized = tasks.map(() => (Math.random() < 0.5 ? 'with' : 'nohint'));
-      setConditions(randomized);
-    }
-  }, [started]);
-
-  // אתחל טיימר בכל משימה
   useEffect(() => {
     if (started && currentIndex < tasks.length) {
       setStartTime(Date.now());
-      setElapsed(0);
-      setReactionTime(null);
     }
   }, [currentIndex, started]);
 
-  // טיימר בלייב
-  useEffect(() => {
-    let timer;
-    if (started && !finished && startTime !== null) {
-      timer = setInterval(() => {
-        setElapsed(Date.now() - startTime);
-      }, 100);
-    }
-    return () => clearInterval(timer);
-  }, [startTime, started, finished]);
-
   const handleFound = () => {
     const endTime = Date.now();
-    const rt = endTime - startTime;
+    const reactionTime = endTime - startTime;
+    setLastReactionTime(reactionTime);
 
-    const condition = conditions[currentIndex];
     const newResponse = {
       taskId: tasks[currentIndex].id,
       target: tasks[currentIndex].target,
       condition,
-      reactionTime: rt,
+      reactionTime,
     };
 
     setResponses((prev) => [...prev, newResponse]);
-    setReactionTime(rt); // שמור להצגה
 
-    setTimeout(() => {
-      if (currentIndex + 1 < tasks.length) {
-        setCurrentIndex((prev) => prev + 1);
-      } else {
-        setFinished(true);
-      }
-    }, 1200); // השהייה להצגת הזמן
+    if (currentIndex + 1 < tasks.length) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      setFinished(true);
+    }
   };
 
   const exportCSV = () => {
@@ -85,13 +59,9 @@ export default function App() {
     return (
       <div style={{ direction: 'rtl', padding: '2rem', fontFamily: 'sans-serif' }}>
         <h1>🎓 ניסוי בנושא ממשק משתמש במערכת Moodle</h1>
-        <p>
-          שלום! תודה שהצטרפת לניסוי קצר בנושא ממשק משתמש.
-          במסגרת הניסוי תוצג לך תמונה מתוך מערכת Moodle, ותתבקש/י לאתר פריט מסוים (כמו הסילבוס או תיבת הגשה).
-        </p>
-        <p>
-          יש ללחוץ על כפתור "מצאתי" ברגע שמצאת את הפריט המבוקש.
-        </p>
+        <p>שלום! תודה שהצטרפת לניסוי קצר בנושא ממשק משתמש.
+        במסגרת הניסוי תוצג לך תמונה מתוך מערכת Moodle, ותתבקש/י לאתר פריט מסוים (כמו הסילבוס או תיבת הגשה).</p>
+        <p>יש ללחוץ על כפתור "מצאתי" ברגע שמצאת את הפריט המבוקש.</p>
         <button onClick={() => setStarted(true)} style={{
           marginTop: '2rem',
           padding: '1rem 2rem',
@@ -112,7 +82,38 @@ export default function App() {
     return (
       <div style={{ direction: 'rtl', padding: '2rem', fontFamily: 'sans-serif' }}>
         <h2>👏 תודה שהשתתפת בניסוי!</h2>
-        <p>ניתן להוריד את תוצאות הניסוי כקובץ CSV:</p>
+        <p>הנה התוצאות שלך:</p>
+        <table style={{
+          width: '100%',
+          borderCollapse: 'collapse',
+          marginTop: '1rem',
+          fontSize: '1rem'
+        }}>
+          <thead>
+            <tr style={{ backgroundColor: '#f0f0f0' }}>
+              <th style={{ border: '1px solid #ccc', padding: '8px' }}>#</th>
+              <th style={{ border: '1px solid #ccc', padding: '8px' }}>היעד</th>
+              <th style={{ border: '1px solid #ccc', padding: '8px' }}>תנאי</th>
+              <th style={{ border: '1px solid #ccc', padding: '8px' }}>זמן (שניות)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {responses.map((r, index) => (
+              <tr key={r.taskId}>
+                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{index + 1}</td>
+                <td style={{ border: '1px solid #ccc', padding: '8px' }}>{r.target}</td>
+                <td style={{ border: '1px solid #ccc', padding: '8px' }}>
+                  {r.condition === 'with' ? 'עם רמז' : 'בלי רמז'}
+                </td>
+                <td style={{ border: '1px solid #ccc', padding: '8px' }}>
+                  {(r.reactionTime / 1000).toFixed(1)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <p style={{ marginTop: '2rem' }}>ניתן להוריד את התוצאות כקובץ CSV:</p>
         <button onClick={exportCSV} style={{
           marginTop: '1rem',
           padding: '0.8rem 1.5rem',
@@ -130,7 +131,6 @@ export default function App() {
   }
 
   const task = tasks[currentIndex];
-  const condition = conditions[currentIndex];
   const imgName = `${task.imageBase}_${condition === 'with' ? 'withhint' : 'nohint'}.png`;
   const imgUrl = `/images/${imgName}`;
 
@@ -138,18 +138,9 @@ export default function App() {
     <div style={{ direction: 'rtl', padding: '2rem', fontFamily: 'sans-serif' }}>
       <h2>🔍 משימה {currentIndex + 1} מתוך {tasks.length}</h2>
       <p>אנא מצא/י את: <strong>{task.target}</strong></p>
-
-      <p style={{ fontSize: '1.1rem', color: '#555' }}>
-        ⏱ זמן שחלף: {(elapsed / 1000).toFixed(1)} שניות
-      </p>
-
-      <img
-        src={imgUrl}
-        alt="תמונה מתוך Moodle"
-        style={{ width: '1000px', height: 'auto' }}
-      />
+      <img src={imgUrl} alt="תמונה מתוך Moodle" style={{ width: '900px', height: 'auto' }} />
       <br />
-      <button onClick={handleFound} disabled={reactionTime !== null} style={{
+      <button onClick={handleFound} style={{
         marginTop: '1rem',
         padding: '0.8rem 1.5rem',
         fontSize: '1rem',
@@ -161,10 +152,9 @@ export default function App() {
       }}>
         מצאתי!
       </button>
-
-      {reactionTime !== null && (
-        <p style={{ marginTop: '1rem', fontSize: '1.1rem', color: '#009688' }}>
-          ✅ לקח לך {(reactionTime / 1000).toFixed(1)} שניות
+      {lastReactionTime && currentIndex > 0 && (
+        <p style={{ marginTop: '1rem', fontSize: '1.2rem', color: '#555' }}>
+          זמן שמציאת הפריט הקודם: {(lastReactionTime / 1000).toFixed(1)} שניות
         </p>
       )}
     </div>
