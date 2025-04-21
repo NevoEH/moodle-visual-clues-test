@@ -7,28 +7,32 @@ const tasks = [
 
 export default function App() {
   const [started, setStarted] = useState(false);
-  const [condition, setCondition] = useState(null); // 'with' or 'nohint'
+  const [conditions, setConditions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [startTime, setStartTime] = useState(null);
-  const [elapsed, setElapsed] = useState(0); // ⏱️ חדש
+  const [elapsed, setElapsed] = useState(0);
+  const [reactionTime, setReactionTime] = useState(null); // 🆕 תצוגת זמן סיום
   const [responses, setResponses] = useState([]);
   const [finished, setFinished] = useState(false);
 
+  // כשמתחילים - גריל תנאי לכל משימה
   useEffect(() => {
     if (started) {
-      const random = Math.random() < 0.5 ? 'with' : 'nohint';
-      setCondition(random);
+      const randomized = tasks.map(() => (Math.random() < 0.5 ? 'with' : 'nohint'));
+      setConditions(randomized);
     }
   }, [started]);
 
+  // אתחל טיימר בכל משימה
   useEffect(() => {
     if (started && currentIndex < tasks.length) {
       setStartTime(Date.now());
       setElapsed(0);
+      setReactionTime(null);
     }
   }, [currentIndex, started]);
 
-  // ⏱️ עדכון טיימר כל 100ms
+  // טיימר בלייב
   useEffect(() => {
     let timer;
     if (started && !finished && startTime !== null) {
@@ -41,22 +45,26 @@ export default function App() {
 
   const handleFound = () => {
     const endTime = Date.now();
-    const reactionTime = endTime - startTime;
+    const rt = endTime - startTime;
 
+    const condition = conditions[currentIndex];
     const newResponse = {
       taskId: tasks[currentIndex].id,
       target: tasks[currentIndex].target,
       condition,
-      reactionTime,
+      reactionTime: rt,
     };
 
     setResponses((prev) => [...prev, newResponse]);
+    setReactionTime(rt); // שמור להצגה
 
-    if (currentIndex + 1 < tasks.length) {
-      setCurrentIndex((prev) => prev + 1);
-    } else {
-      setFinished(true);
-    }
+    setTimeout(() => {
+      if (currentIndex + 1 < tasks.length) {
+        setCurrentIndex((prev) => prev + 1);
+      } else {
+        setFinished(true);
+      }
+    }, 1200); // השהייה להצגת הזמן
   };
 
   const exportCSV = () => {
@@ -103,7 +111,7 @@ export default function App() {
   if (finished) {
     return (
       <div style={{ direction: 'rtl', padding: '2rem', fontFamily: 'sans-serif' }}>
-        <h2>👏 תודה שסיימת את הניסוי!</h2>
+        <h2>👏 תודה שהשתתפת בניסוי!</h2>
         <p>ניתן להוריד את תוצאות הניסוי כקובץ CSV:</p>
         <button onClick={exportCSV} style={{
           marginTop: '1rem',
@@ -122,6 +130,7 @@ export default function App() {
   }
 
   const task = tasks[currentIndex];
+  const condition = conditions[currentIndex];
   const imgName = `${task.imageBase}_${condition === 'with' ? 'withhint' : 'nohint'}.png`;
   const imgUrl = `/images/${imgName}`;
 
@@ -137,10 +146,10 @@ export default function App() {
       <img
         src={imgUrl}
         alt="תמונה מתוך Moodle"
-        style={{ width: '800px', height: 'auto' }}
+        style={{ width: '700px', height: 'auto' }}
       />
       <br />
-      <button onClick={handleFound} style={{
+      <button onClick={handleFound} disabled={reactionTime !== null} style={{
         marginTop: '1rem',
         padding: '0.8rem 1.5rem',
         fontSize: '1rem',
@@ -152,6 +161,12 @@ export default function App() {
       }}>
         מצאתי!
       </button>
+
+      {reactionTime !== null && (
+        <p style={{ marginTop: '1rem', fontSize: '1.1rem', color: '#009688' }}>
+          ✅ לקח לך {(reactionTime / 1000).toFixed(1)} שניות
+        </p>
+      )}
     </div>
   );
 }
