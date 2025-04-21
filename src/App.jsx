@@ -42,7 +42,7 @@ export default function App() {
   };
 
   const exportToGoogleSheets = async () => {
-    const webhookUrl = 'https://script.google.com/macros/s/AKfycbxFA8Z74NYS_32NvzkWFmhMo0AxLUA9AojLVFkaBMUR9qp0ZDqgxkmI0oVfxjrvpY3M/exec'; // החלף ב-URL שקיבלת מ-Google Apps Script
+    const webhookUrl = 'https://script.google.com/macros/s/AKfycbzcero6BIFRiPAqcDzmbX9icwxZSRV9Mjb8Cc1_vuAzWkKPDSUMzTFxilVaBQooPgJS/exec'; // החלף ב-URL שקיבלת מ-Google Apps Script
   
     try {
       const res = await fetch(webhookUrl, {
@@ -117,7 +117,7 @@ export default function App() {
           </tbody>
         </table>
 
-        <p style={{ marginTop: '2rem' }}>ניתן להוריד את התוצאות כקובץ CSV:</p>
+        <p style={{ marginTop: '2rem' }}>אנא תשמרו את תוצאות הניסוי שלכם</p>
         <button onClick={exportToGoogleSheets} style={{
           marginTop: '1rem',
           padding: '0.8rem 1.5rem',
@@ -128,7 +128,7 @@ export default function App() {
           borderRadius: '8px',
           cursor: 'pointer'
         }}>
-          הורד תוצאות
+          שמור תוצאות
         </button>
       </div>
     );
