@@ -138,7 +138,7 @@ export default function App() {
     <div style={{ direction: 'rtl', padding: '2rem', fontFamily: 'sans-serif' }}>
       <h2>🔍 משימה {currentIndex + 1} מתוך {tasks.length}</h2>
       <p>אנא מצא/י את: <strong>{task.target}</strong></p>
-      <img src={imgUrl} alt="תמונה מתוך Moodle" style={{ width: '900px', height: 'auto' }} />
+      <img src={imgUrl} alt="תמונה מתוך Moodle" style={{ width: '850px', height: 'auto' }} />
       <br />
       <button onClick={handleFound} style={{
         marginTop: '1rem',
