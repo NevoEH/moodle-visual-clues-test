@@ -55,7 +55,7 @@ export default function App() {
   
       alert('הנתונים נשלחו בהצלחה!');
     } catch (error) {
-      alert('שגיאה בשליחת הנתונים: ' + error.message);
+      alert('שלחו צילום מסך כבררר' );
     }
   };
 
@@ -117,7 +117,7 @@ export default function App() {
           </tbody>
         </table>
 
-        <p style={{ marginTop: '2rem' }}>אנא תשמרו את תוצאות הניסוי שלכם</p>
+        <p style={{ marginTop: '2rem' }}>בבקשה תשלחו צילום מסך לנבו / עומר / משי / רומי </p>
         <button onClick={exportToGoogleSheets} style={{
           marginTop: '1rem',
           padding: '0.8rem 1.5rem',
