@@ -119,7 +119,7 @@ export default function App() {
       <img
         src={imgUrl}
         alt="תמונה מתוך Moodle"
-        style={{ maxWidth: '100%', border: '1px solid #ccc', marginTop: '1rem' }}
+        style={{ width: '700px', height: 'auto' }}
       />
       <br />
       <button onClick={handleFound} style={{
