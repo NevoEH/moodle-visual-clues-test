@@ -158,7 +158,7 @@ export default function App() {
       </button>
       {lastReactionTime && currentIndex > 0 && (
         <p style={{ marginTop: '1rem', fontSize: '1.2rem', color: '#555' }}>
-          זמן שמציאת הפריט הקודם: {(lastReactionTime / 1000).toFixed(1)} שניות
+          זמן למציאת הפריט הקודם: {(lastReactionTime / 1000).toFixed(1)} שניות
         </p>
       )}
     </div>
