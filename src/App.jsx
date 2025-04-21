@@ -10,6 +10,7 @@ export default function App() {
   const [condition, setCondition] = useState(null); // 'with' or 'nohint'
   const [currentIndex, setCurrentIndex] = useState(0);
   const [startTime, setStartTime] = useState(null);
+  const [elapsed, setElapsed] = useState(0); // ⏱️ חדש
   const [responses, setResponses] = useState([]);
   const [finished, setFinished] = useState(false);
 
@@ -23,8 +24,20 @@ export default function App() {
   useEffect(() => {
     if (started && currentIndex < tasks.length) {
       setStartTime(Date.now());
+      setElapsed(0);
     }
   }, [currentIndex, started]);
+
+  // ⏱️ עדכון טיימר כל 100ms
+  useEffect(() => {
+    let timer;
+    if (started && !finished && startTime !== null) {
+      timer = setInterval(() => {
+        setElapsed(Date.now() - startTime);
+      }, 100);
+    }
+    return () => clearInterval(timer);
+  }, [startTime, started, finished]);
 
   const handleFound = () => {
     const endTime = Date.now();
@@ -116,10 +129,15 @@ export default function App() {
     <div style={{ direction: 'rtl', padding: '2rem', fontFamily: 'sans-serif' }}>
       <h2>🔍 משימה {currentIndex + 1} מתוך {tasks.length}</h2>
       <p>אנא מצא/י את: <strong>{task.target}</strong></p>
+
+      <p style={{ fontSize: '1.1rem', color: '#555' }}>
+        ⏱ זמן שחלף: {(elapsed / 1000).toFixed(1)} שניות
+      </p>
+
       <img
         src={imgUrl}
         alt="תמונה מתוך Moodle"
-        style={{ width: '700px', height: 'auto' }}
+        style={{ width: '800px', height: 'auto' }}
       />
       <br />
       <button onClick={handleFound} style={{
