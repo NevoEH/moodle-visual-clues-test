@@ -41,18 +41,22 @@ export default function App() {
     }
   };
 
-  const exportCSV = () => {
-    const header = 'taskId,target,condition,reactionTime(ms)\n';
-    const rows = responses
-      .map((r) => `${r.taskId},${r.target},${r.condition},${r.reactionTime}`)
-      .join('\n');
-
-    const blob = new Blob([header + rows], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'results.csv';
-    link.click();
+  const exportToGoogleSheets = async () => {
+    const webhookUrl = 'https://script.google.com/macros/s/AKfycbxFA8Z74NYS_32NvzkWFmhMo0AxLUA9AojLVFkaBMUR9qp0ZDqgxkmI0oVfxjrvpY3M/exec'; // החלף ב-URL שקיבלת מ-Google Apps Script
+  
+    try {
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        body: JSON.stringify(responses),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      alert('הנתונים נשלחו בהצלחה!');
+    } catch (error) {
+      alert('שגיאה בשליחת הנתונים: ' + error.message);
+    }
   };
 
   if (!started) {
@@ -114,7 +118,7 @@ export default function App() {
         </table>
 
         <p style={{ marginTop: '2rem' }}>ניתן להוריד את התוצאות כקובץ CSV:</p>
-        <button onClick={exportCSV} style={{
+        <button onClick={exportToGoogleSheets} style={{
           marginTop: '1rem',
           padding: '0.8rem 1.5rem',
           fontSize: '1rem',
