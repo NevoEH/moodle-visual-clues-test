@@ -146,7 +146,7 @@ export default function App() {
       <img
         src={imgUrl}
         alt="תמונה מתוך Moodle"
-        style={{ width: '700px', height: 'auto' }}
+        style={{ width: '1000px', height: 'auto' }}
       />
       <br />
       <button onClick={handleFound} disabled={reactionTime !== null} style={{
