@@ -42,7 +42,7 @@ export default function App() {
   };
 
   const exportToGoogleSheets = async () => {
-    const webhookUrl = 'https://script.google.com/macros/s/AKfycbzcero6BIFRiPAqcDzmbX9icwxZSRV9Mjb8Cc1_vuAzWkKPDSUMzTFxilVaBQooPgJS/exec'; // החלף ב-URL שקיבלת מ-Google Apps Script
+    const webhookUrl = 'https://script.google.com/macros/s/AKfycbwvd07946uJX54e9RzrNdBr3smGcz5l2IdQFhli4AhbIbq4J33WlWskF3SOHBDvno-Q/exec'; // החלף ב-URL שקיבלת מ-Google Apps Script
   
     try {
       const res = await fetch(webhookUrl, {
