@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 const tasks = [
-  { id: 1, target: 'סילבוס', imageBase: 'img1' },
-  { id: 2, target: 'תיבת הגשה', imageBase: 'img2' },
+  { id: 1, target: 'מבוא להסתברות', imageBase: 'img1' },
+  { id: 2, target: 'תיבת הגשה - פרויקט', imageBase: 'img2' },
 ];
 
 export default function App() {
